@@ -1,7 +1,9 @@
 //In The Name Of Allah
+
 #include "FunctionHeader.h"
+#define TAB "    "
 //#Problems :
-//createfile with space in folders 
+//createfile is ok
 //cat is ok
 //insertstr "" for string
 //remove  0 1 + Error EOF &0
@@ -9,14 +11,30 @@
 //cut     
 //paste
 //find
+//replace
 //greb
+//undo
+struct finder {
+    int size;
+    int* by_position;
+    int* by_word;
+    int count;
+};
+
+void print_array(int array[],int n);
+void assign_spaces (char *source, int spaces[]);
+void assign_arrays (char * before, char * after , char*  source, int befend[], int afterst[]);
+struct finder* find (char * source , char * text);
 #define exists file_exists
+
 int main(){
     FILE * fptr;
     //fptr =fopen("./root/m","r+");
     char try[1000];strcpy(try,"/root/m");
-    cut(try,2,3,5,1);
-    exit(1);
+    char text[1000];
+    strcpy(text,"abcd");
+    //find(try,text);
+    //exit(1);
     char command[2000];char command_type[2000];char other[2000];char address[2000];char useless[2000];
     while(true)
     {
@@ -54,6 +72,7 @@ int main(){
         insertstr(address,str,line ,pos);
     
    }
+
    //case #number_3 : cat
    else if (!strcmp(command_type,"cat")){
         sscanf(other,"%s %[^\n]",useless,address);
@@ -77,15 +96,16 @@ int main(){
             sscanf(address,"%s%*s%s%*s %*c %c %*c %*c %c",address,other,size,how);
         line = other[0] -'0';
         pos = other[2] - '0';
-        printf("%s\n%s\n%d\n%d\n%c\n%c\n",address,other,line,pos,size,how);
+        //printf("%s\n%s\n%d\n%d\n%c\n%c\n",address,other,line,pos,size,how);
     }
 }  
 }
 
-//General Functions
+// General Functions
+
 int number_of_charactars (FILE *fptr ){
     int c ;
-    int   n =0;
+    int n =0;
     do {
         c = fgetc(fptr);
         if (c!=EOF)++n;
@@ -147,12 +167,9 @@ if (dir) {
 }
 int check_all (char* address ){
     //printf("1");
-    char *str;str = (char*)malloc(2000*sizeof(char));
-    char *sup ; sup = (char*)malloc(2000*sizeof(char));
-    char *text ;text=(char*)malloc(2000*sizeof(char));
+    char *str;str = (char*)malloc(2000*sizeof(char));char text[2000];
     //printf("%s\n",address);
     if(address[0] =='/'){
-    sscanf(address,"%s %c %[^\n]",address,text,sup);
     //sscanf(text,"%s %[^\n]",sup,text);
     //printf("%s",sup);
     int j=0;
@@ -162,9 +179,8 @@ int check_all (char* address ){
         }
         }
         strcpy(str,".");
-        strncat(str,&address[0],j);
-        strcpy(address,str);
-        //printf("%s",text);
+        strncat(str,address,j);
+        //printf("%s",str);
     if(!folder_exists(str)){
         puts("Directory Does Not Exists");
         return -1;
@@ -172,12 +188,13 @@ int check_all (char* address ){
     else {
     //printf("1");
         strcpy(str,".");
-        strncat(str,&address[0],strlen(address));
-        strcpy(address,str);
+        strncat(str,address,strlen(address));
+        //printf("%s",str);
         if(!file_exists(str)){
             puts("File Does Not Exists");
             return -1;
         }
+        strcpy(address,str);
         return 0;
         }
     }
@@ -192,7 +209,6 @@ int check_all (char* address ){
             strncat(address,&address[0],1);
             strcpy(str,".");
             strncat(str,&address[1],j);
-            strcpy(address,str);
             if(!folder_exists(str)){
                 puts("Directory Does Not Exists");
                 return-1;
@@ -215,100 +231,100 @@ void alter_to_address(char *address) {
     strcat(buffer,address);
     strcpy(address,buffer);
 }
+void print_array(int array[],int n){
+    for(int i =0;i<n;++i){
+        printf("%d",array[i]);
+    }
+    printf("\n");return;
+}
+void print_string(char array[],int n){
+    for(int i =0;i<n;++i){
+        printf("%c",array[i]);
+    }
+    printf("\n");return;
+}
+void assign_spaces (char *source, int spaces[]){
+    for (int i=0;i<strlen(source);++i)spaces[i]=-1;
+    for (int i=0;i<strlen(source);++i){
+        //printf("%c",source[i]);
+        if (source[i]==' ')
+            spaces[i] = 0;
+    }
+    return;
+}
+void assign_arrays (char * before, char * after , char*  source, int befend[], int afterst[]) 
+{
+    for (int i=0;i<strlen(source);++i)befend[i]=-1;
+    for (int i=0;i<strlen(source);++i)afterst[i]=-1;
+    for (int i =0;i<strlen(source);++i){
+        int k =0;
+        for (int j=0;j<strlen(before);j++){
+            if(before[j]==source[i+j])++k;
+        }
+        if (k==strlen(before)){
+            befend[i+k-1]=0;
+        }
+    }
+    for (int i =0;i<strlen(source);++i) {
+        int k =0;
+        for (int j=0;j<strlen(after);j++){
+            if(after[j]==source[i+j])++k;
+        }
+        //printf("%d\n",k);
+        if (k==strlen(after)){
+            afterst[i]=0;
+        }
+    }
+}
 
-//Main Functions 
+// Main Functions 
 
 void createfile (char* address){
-      if (address[0]=='"'){
-                if (address[1]=='/'){
-                    if(address[strlen(address)-1]=='"'){
-                        char *str;str = (char*)malloc(2000*sizeof(char));
-                        char *sup ; sup = (char*)malloc(2000*sizeof(char));
-                        //printf("%s",address);
-                        //printf("%s",strncpy(str,address,6));
-                        if(strcmp(strncpy(str,address+1,6),"/root/")==0){
-                        //printf("%d",strlen(address));
-                            if(strlen(address)>8){
-                            strcpy(str,"./root");
-                            //printf("%s",str);
-                            mkdir(str,0777);
-                            strcpy(str,"./root/");
-                            //          /root/dir1/dir2/kiani.txt
-                            int j =7;
-                            for (int i=7;i<strlen(address)-1;i++){
-                                if (address[i]=='/'){
-                                    strncpy(sup,address+j,i-j);
-                                    strncat(str,sup,i-j);
-                                    mkdir(str,0777);
-                                    strncat(str,&address[i],1);
-                                    j=i+1;
-                                                     }
-                                                                }
-                            strcpy(sup,".");
-                            strncat(sup,&address[0]+1,strlen(address)-2);
-                            if(exists(sup)==true){
-                                printf("File Existed\n");
-                                return ;
-                                                }
-                            else {
-                                FILE *file;
-                                file = fopen(sup,"w");
-                                fclose(file);
-                                }
-                            }
-                            else {
-                                printf("Invalid Input\n");
-                                 return;
-                                    }
-         }
-         }
-                    else {
-                        printf("Invalid Input\n");
-                        return;
-                        }
-        }     
-        else {printf("Invalid Input\n");return;}
-        }
-         else if (address[0] == '/'){
-            char *str;str = (char*)malloc(2000*sizeof(char));
-            char *sup ; sup = (char*)malloc(2000*sizeof(char));
-            //printf("%s",address);
-            //printf("%s",strncpy(str,address,6));
-            if(strcmp(strncpy(str,address,6),"/root/")==0){
-                //printf("%d",strlen(address));
-                if(strlen(address)>6){
-                strcpy(str,"./root");
-                //printf("%s",str);
-                mkdir(str,0777);
-                strcpy(str,"./root/");
-                //          /root/dir1/dir2/kiani.txt
-                int j =6;
-                for (int i=6;i<strlen(address);i++){
-                if (address[i]=='/'){
-                strncpy(sup,address+j,i-j);
-                strncat(str,sup,i-j);
-                mkdir(str,0777);
-                strncat(str,&address[i],1);
-                j=i+1;
+        if (address[0]=='"'){
+            //exit(1);
+                int j =0;
+                char buffer [2000];
+                for (int i =1;i<strlen(address)-2;++i){
+                    if(address[i]=='/'){
+                        strcpy(buffer,".");
+                        strncat(buffer,address+1,i-1);
+                        mkdir(buffer,0777);
+                        //print_string(buffer,strlen(buffer));
+                    }
+                }
+                strcpy(buffer,".");
+                strncat(buffer,address+1,strlen(address)-2);
+                if(file_exists(buffer)){
+                    puts("File Already Existed!");return;
+                }
+                FILE *fptr;
+                fptr = fopen(buffer,"w+");
+                fclose(fptr);
+                return;
             }
+        
+        else if (address[0] == '/'){
+            int j =0;
+                char buffer [2000];
+                for (int i =1;i<strlen(address)-2;++i){
+                    if(address[i]=='/'){
+                        strcpy(buffer,".");
+                        strncat(buffer,address,i);
+                        mkdir(buffer,0777);
+                        //print_string(buffer,strlen(buffer));
+                    }
+                }
+                strcpy(buffer,".");
+                strncat(buffer,address,strlen(address));
+                if(file_exists(buffer)){
+                    puts("File Already Existed!");return;
+                }
+                FILE *fptr;
+                fptr = fopen(buffer,"w+");
+                fclose(fptr);
+                return;
          }
-           strcpy(sup,".");
-           strcat(sup,address);
-           if(exists(sup)==true){
-               printf("File Existed\n");}
-           else {
-               FILE *file;
-               //printf("%s",sup);
-               file = fopen(sup,"w");
-               fclose(file);}
          }
-         else {
-             printf("Invalid Input\n");
-             return;
-         }
-         }
-   }
-}
 void cat (char*address){
     int check = check_all(address);
     char buff [100] ;
@@ -579,4 +595,253 @@ void paste (char* address,int line , int pos ) {
     fclose (sptr);
     remove("./root/clipboar");
 }
+}
+struct finder* find (char * address , char * text) {
+    //DO THE ADDRESS
+    int check = check_all (address);
+    if (check)return NULL;
+    //ADDRESS
+    FILE * fptr;
+    char add[1000];
+    strcpy(add,address);
+    //MAIN
+    fptr = fopen (add,"r+");
+    int t =number_of_charactars(fptr)-1;
+    fseek(fptr,0,SEEK_SET);
+    char * source = (char*)malloc (sizeof (char ) * t);
+    for (int i=0;i<t-1;++i){
+        char c = fgetc(fptr);
+        char * l = &c;
+        strcat(source,l);
+    }
+    //print_string(source,strlen(source));exit(1);
+    //Creating Struct
+
+    struct finder solver;
+    struct finder *ptr = &solver;
+    ptr->by_position=(int*)(malloc (sizeof(int) *strlen(source)));
+    ptr->by_word=(int *)(malloc(sizeof(int)*strlen(source)));
+
+    //Creating Struct Components
+
+    int by_word [strlen(source)];
+    int by_position[strlen(source)];
+
+    //Spaces
+
+    int spaces[strlen(source)];
+    assign_spaces(source,spaces);
+
+    //Assigning Initial Structs Situations
+
+    for(int i=0;i<strlen(source);++i){
+        by_position[i] = -1;
+        by_word[i] = -1;
+        ptr->by_position[i] = -1;
+        ptr->by_word[i] = -1;
+    }
+    int count =0;
+    //ASSESS DIFFERENT TYPES OF INPUT
+    bool two_part =false;
+    bool star_exist = false;
+    char * before ;char * after;
+
+    //Before & After
+
+    bool bf ;
+
+    if(text[0]=='*') {
+            after= (char*) malloc(sizeof(char)*strlen(source));
+            star_exist= true;
+            strncpy(after,text+1,strlen(text)-1);
+            bf = true;
+        }
+        else if (text[strlen(text)-1]=='*') {
+            before=(char*)malloc(sizeof(char)*strlen(source));
+            star_exist= true;
+            strncpy(before,text,strlen(text)-1);
+            bf = false;
+        }
+    else {
+    for (int i=0;i<strlen(text);++i){
+            if(text[i]=='*' && text[i-1] !='\\') {
+            star_exist= true;
+            if(text[i-1] ==' ') {
+                two_part=true;
+                before = (char *) malloc(sizeof(char) *i);
+                after = (char *) malloc(sizeof(char) *strlen(text)-i-1);
+                strncpy(before,text,i);
+                strncpy(after,text+i+1,strlen(text)-i-1);
+                
+            }
+            else if (text[i+1] ==' '){
+                two_part = true;
+                before = (char *) malloc(sizeof(char) *i);
+                after = (char *) malloc(sizeof(char) *strlen(text)-i-1);
+                strncpy(before,text,i);
+                strncpy(after,text+i+1,strlen(text)-i-1);
+            }       
+        }
+        else if(text[i]=='*' && text[i-1] =='\\'){
+            strncpy(text+i-1,text+i,strlen(text)-i);
+        }
+    }
+    }
+
+    //Befend and Afterst
+
+    int befend[strlen(source)];
+    int afterst [strlen(source)];
+    if(two_part) assign_arrays(before,after,source,befend,afterst);
+    else if (bf) {
+        for (int i=0;i<strlen(source);++i)befend[i]=-1;
+        for (int i=0;i<strlen(source);++i)afterst[i]=-1;
+    //assigning befend
+        for (int i =0;i<strlen(source);++i){
+            befend[i]=0;
+        }
+        //assigning afterst
+        for (int i =0;i<strlen(source);++i) {
+            int k =0;
+            for (int j=0;j<strlen(after);j++){
+                if(after[j]==source[i+j])++k;
+            }
+            if (k==strlen(after)){
+                afterst[i]=0;
+            }
+        }
+    }
+    else if (!bf){
+         for (int i=0;i<strlen(source);++i)befend[i]=-1;
+            for (int i=0;i<strlen(source);++i)afterst[i]=-1;
+        //assigning afterst
+        for (int i =0;i<strlen(source);++i){
+            afterst[i]=0;
+        }
+        //assigning befend
+        for (int i =0;i<strlen(source);++i){
+            int k =0;
+            for (int j=0;j<strlen(before);j++){
+                if(before[j]==source[i+j])++k;
+            }
+            if (k==strlen(before)){
+                befend[i+k-1]=0;
+            }
+        }
+    }
+
+    //Main Function
+
+    int z=0;
+    if (!two_part) {
+        if(!star_exist) {
+        //query with no *
+            for (int i =0;i<strlen(source);++i) {
+                int k =0;
+                for (int j=0;j<strlen(text);j++){
+                    if(text[j]==source[i+j])++k;
+                }
+                if (k==strlen(text)){
+                    by_position[i] = 0;
+                    ++count;
+                    z=0;
+                    for (int b=0;b<i;++b){if (!spaces[b])z++;}
+                    by_word[z] = 0;
+                }
+             }
+            for (int i =0;i<strlen(source);++i){
+                ptr->by_position[i] = by_position[i];
+                ptr->by_word[i] = by_word[i];
+            }
+            ptr->count = count;
+        }
+        else {
+        //a*
+            if(!bf){
+                
+                //a*()
+                    //printf("%s",before);
+                    //print_array(befend,strlen(source));exit(1);
+                    int max_after[strlen(source)];
+                    for (int i=0;i<strlen(source);++i)max_after[i]=0;
+                    for (int i =0;i<strlen(source);++i) {
+                        if (!befend[i]){
+                            max_after[i]=i;
+                            for(int j=i+1;j<strlen(source);j++){
+                                if(spaces[j]){max_after[i]=j;}
+                                if(!spaces[j])break;
+                            }
+                        }          
+                    }
+                    for (int i =0;i<strlen(source);++i) {
+                        if(max_after[i]) {
+                            ptr->by_position[i]=max_after[i];
+                            for (int b=0;b<i;++b){if (!spaces[b])z++;}
+                            ptr->by_word[i]=z;
+                            ++count;
+            }
+        }
+                    ptr->count = count;
+
+                }
+            
+        //*a
+            else if (bf){
+                //find 
+                //printf("%s",before);
+                int max_after[strlen(source)];
+                bool pass;int c=0;
+                for (int i=0;i<strlen(source);++i)max_after[i]=0;
+                for (int i =0;i<strlen(source);++i) {
+                pass = false;
+                if (!befend[i]){
+                for(int j=i+1;j<strlen(source);j++){
+                    if(!afterst[j]){max_after[i]=j;c=j;pass= true;}
+                    if(!spaces[j]) break;
+                }
+            }
+            if(pass){
+                i=c-1;
+            }   
+        }
+                    for (int i =0;i<strlen(source);++i) {
+                        if(max_after[i]) {
+                            ptr->by_position[i]=max_after[i];
+                            for (int b=0;b<i;++b){if (!spaces[b])z++;}
+                            ptr->by_word[i]=z;
+                            ++count;
+                         }
+                    }
+                    ptr->count = count;
+            }
+        }   
+    }
+    else {
+        int maximal_after[strlen(source)];
+        for(int i=0;i<strlen(source);++i) {maximal_after[i] = 0;}
+        int c =0;
+        bool pass ;
+        for (int i =0;i<strlen(source);++i) {
+            pass = false;
+            if (!befend[i]){
+                for(int j=i+1;j<strlen(source);j++){
+                    if(!afterst[j]){maximal_after[i]=j;c=j;pass= true;}
+                    if(!spaces[j]) break;
+                }
+            }
+            if(pass){
+                i=c-1;
+            }   
+        }
+        for (int i =0;i<strlen(source);++i) {
+            if(maximal_after[i]) {
+                ptr->by_position[i]=maximal_after[i];
+                for (int b=0;b<i;++b){if (!spaces[b])z++;}
+                ptr->by_word[i]=z;
+                ++count;
+            }
+        }
+        ptr->count = count;
+    }
+    return ptr;
 }
