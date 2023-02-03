@@ -1,5 +1,5 @@
 //In The Name Of Allah
-
+#define exists file_exists
 #include "FunctionHeader.h"
 #define TAB "    "
 //#Problems :
@@ -14,95 +14,102 @@
 //replace
 //greb
 //undo
+struct undoer {
+    char* address_of_me;
+    struct undore* before;
+};
 struct finder {
     int size;
     int* by_position;
     int* by_word;
     int count;
 };
-
-void print_array(int array[],int n);
-void assign_spaces (char *source, int spaces[]);
-void assign_arrays (char * before, char * after , char*  source, int befend[], int afterst[]);
-struct finder* find (char * source , char * text);
-#define exists file_exists
+struct greber {
+    int count ;
+    char *lines[20000];
+    int number_of_line[20000];
+    char *files[20000];
+};
+struct comparator {
+    int count ;
+    char *lines[20000];
+    int number_of_line[20000];};
 
 int main(){
-    FILE * fptr;
-    //fptr =fopen("./root/m","r+");
-    char try[1000];strcpy(try,"/root/m");
-    char text[1000];
-    strcpy(text,"abcd");
-    //find(try,text);
-    //exit(1);
-    char command[2000];char command_type[2000];char other[2000];char address[2000];char useless[2000];
-    while(true)
-    {
-    scanf("%[^\n]%*c",command);
-    sscanf(command,"%s %[^\n]%*c",command_type,other);
-    //close command : default
-    if(!strcmp(command ,"close")){
-        break;
-    }
-    //case #number_1 : createfile 
-    if(strcmp(command_type,"createfile")==0){
-       sscanf(other,"%s %[^\n]%*c",useless,address);
-       //printf("%s",address);
-        createfile(address);
-   }  
-   //case #number_2 : insert
-   else if(strcmp(command_type,"insertstr")==0){
-       //printf("%d",1);
-        sscanf(other,"%s %[^\n]%*c",useless,address);
-        int line , pos;
-        char esc;
-        char str [100];
-        char rest[100];
-        if(address[0]=='"'){
-            sscanf(address+1,"%[^\"] %*c %s %s %s %[^\n]",address+1,useless,str,other,rest);
-            *(address)='"';
-            strcat(address,"\"");
-            }
-        else if(address[0]=='/')
-            sscanf(address,"%s %*c %s %s %s  %[^\n]",address,useless,str,other,rest);
-        line = rest[0] -'0';
-        pos = rest[2]-'0';
-        //printf("%d%d\n",line,pos);
-        //printf("%s\n%s\n%d\n%d\n",address,str,line ,pos);
-        insertstr(address,str,line ,pos);
-    
-   }
-
-   //case #number_3 : cat
-   else if (!strcmp(command_type,"cat")){
-        sscanf(other,"%s %[^\n]",useless,address);
-        cat(address);
-        //printf("%s",address);
-        //printf("%s",address);
-   } 
-   
-    //case #number_4 : remove
-    if(!strcmp(command_type,"removestr")){
-        sscanf(other,"%s %[^\n]",useless,address);
-        int line , pos;
-        char how;
-        char useless_2[1000];char size;
-        if(address[0]=='"'){
-            /*sscanf(address+1,"%[^\"] %*c %s %s %s %[^\n]",address+1,useless,str,other,rest);
-            *(address)='"';
-            strcat(address,"\"");
-            }*/}
-        else if(address[0]=='/')
-            sscanf(address,"%s%*s%s%*s %*c %c %*c %*c %c",address,other,size,how);
-        line = other[0] -'0';
-        pos = other[2] - '0';
-        //printf("%s\n%s\n%d\n%d\n%c\n%c\n",address,other,line,pos,size,how);
-    }
-}  
+    char * buff = calloc(100,sizeof(char));char * tuff = calloc(100,sizeof(char));
+    strcpy(tuff,"/root/gr2");
+    strcpy(buff,"/root/gr1");
+    struct comparator * ptr = text_comparator(buff,tuff);
+    print_comparator_lines(ptr);
 }
 
 // General Functions
 
+char* HiddenFile (char *address){
+    int dash;
+    char * NOF = calloc(2000,sizeof(char));
+    for (int q =0;q<strlen(address);++q){if(address[q]=='/')dash=q;}
+    strncpy(NOF,address,dash+1);
+    strcat(NOF,".");
+    strcat(NOF,address+dash+1);
+    return NOF;
+}
+void createbackup(char* address,int t) {
+    FILE* sptr ;
+    char * add;
+    add = HiddenFile(address);
+    char *buff = calloc(1000,sizeof(char));
+    sprintf(buff,"%d",t);
+    strcat(add,buff);
+    sptr = fopen(add,"w+");
+    FILE* fptr ;fptr= fopen (address,"r+");
+    int q = number_of_charactars(fptr)-1;
+    fseek(fptr,0,SEEK_SET);
+    CopyFile(fptr,sptr,0,q);
+    fclose(fptr);
+    fclose(sptr);
+}
+void CopyFile (FILE * fptr ,FILE* sptr, int from , int to ) {
+    int n = 0;
+    int c;
+    while (n<from){
+        c = fgetc(fptr);++n;
+    }
+    while (n<=to) {
+        c = fgetc(fptr);
+        fputc(c,sptr);
+        ++n;
+    }
+}
+void StringToFile (char* str,FILE*fptr,int max){
+    fseek(fptr,0,SEEK_SET);
+    char *buff=calloc(max,sizeof(char));
+    print_string(str,5);
+    exit(1);
+    for(int i=0;i<max;++i){
+        int c = atoi(buff[i]);
+        fputc(c,fptr);
+    }
+    fseek(fptr,0,SEEK_SET);
+    return ;
+}
+char* FileToString (FILE* fptr){
+
+    char* str;
+    int t = number_of_charactars(fptr)-1;
+    fseek(fptr,0,SEEK_SET);
+    str = calloc(t,sizeof(char));
+    for(int i=0;i<t;++i){
+        int c = fgetc(fptr);
+        //printf("%d",c);
+        str[i]= (char)c;
+        //printf("%c",str[i]);
+    }
+    //exit(1);
+    fseek(fptr,0,SEEK_SET);
+    return str;
+
+}
 int number_of_charactars (FILE *fptr ){
     int c ;
     int n =0;
@@ -112,24 +119,15 @@ int number_of_charactars (FILE *fptr ){
     }while(c!=EOF);
     return n;
 }
-void CopyFile (FILE * fptr ,FILE* sptr, int from , int to ) {
-    int n = 0;
-    int c;
-    while (n<from){
-        c = fgetc(fptr);++n;
-    }
-    while (n<=to) {
-        c = fgetc(fptr);++n;
-        fputc(c,sptr);
-    }
-}
 int number_of_lines (FILE* fptr){
     int n = 1;
-    char c ;
+    int c ;
     c = fgetc(fptr);
-    while ((int)c!= EOF) {
-        if (c=='\n') n++;
+    //printf("%c",c);
+    while (c!= EOF) {
+        if (c =='\n') n++;
         c = fgetc(fptr);
+        //printf("%c",c);
     }
     return n ;
 }
@@ -144,7 +142,7 @@ int what_is_the_position(FILE* fptr, int line , int pos) {
         else {p++;n++;c=fgetc(fptr);}
     }
 }
-bool file_exists( char *fname)
+bool file_exists(char *fname)
 {
     FILE *file;
     if ((file = fopen(fname, "r")))
@@ -190,6 +188,7 @@ int check_all (char* address ){
         strcpy(str,".");
         strncat(str,address,strlen(address));
         //printf("%s",str);
+        //print_string(str,strlen(str));
         if(!file_exists(str)){
             puts("File Does Not Exists");
             return -1;
@@ -276,12 +275,78 @@ void assign_arrays (char * before, char * after , char*  source, int befend[], i
         }
     }
 }
+/*void print_find (struct finder* ptr,int mode[4]) {
+    //count is ok with every thing
+    //at != byword != all
+    if(mode[1]+mode[2]+mode[3]>=2){
+        printf("Conflicted Swithces\n");
+        return;
+    }
+    if(mode[0]) {
+        //count 
+        if(ptr->count == 0){
+            printf("%d\n",-1);
+        }
+        else {
+            printf("%d\n",ptr->count);
+        }
+    }
+    if(mode[1]){
+        //at
+        int at =mode[1];
+        int k=0;
+        for (int i =0;i<strlen(ptr->by_position);++i){
+            if(ptr->by_position[i]!=-1)++k;
+            if(k==at){
+                printf("%d\n",ptr->by_position[i]);
+            }
+        }
+        if(k<at){
+            printf("%d\n",-1);
+        }
+    }
+    if(mode[2]){
+        //byword
+        for (int i =0;i<strlen(ptr->by_position);++i){
+            if(ptr->by_position[i]!=-1){printf("%d\n",ptr->by_word[i]);break;}
+        }
+    }
+    if (mode [3]){
+        //all
+        for (int i =0;i<strlen(ptr->by_position);++i){
+            if(ptr->by_position[i]!=-1){printf("%d\n",ptr->by_word[i]);}
+        }
+    }
+    return;
+}*/
+void copy_str(char *det,char* origin,int size){
+    for (int i =0;i<size;++i){
+        *(det+i)=*(origin+i);
+    }
+    *(det+size) = '\0';
+    return;
+}
+int largest_number_for_undo (char * address){
+    char * NOF = HiddenFile(address);
+    int k =0;
+    char* buff = calloc(2000,sizeof(char));
+    char* tuff= calloc(1000,sizeof(char));
+    sprintf(tuff,"%d",k+1);
+    strcpy(buff,NOF);
+    strcat(buff,tuff);
+    while (file_exists(buff)){
+        ++k;
+        sprintf(tuff,"%d",k+1);
+        strcpy(buff,NOF);
+        strcat(buff,tuff);
+    }
+    return k;
+}
 
-// Main Functions 
+//Main Functions 
 
 void createfile (char* address){
         if (address[0]=='"'){
-            //exit(1);
                 int j =0;
                 char buffer [2000];
                 for (int i =1;i<strlen(address)-2;++i){
@@ -301,30 +366,77 @@ void createfile (char* address){
                 fptr = fopen(buffer,"w+");
                 fclose(fptr);
                 return;
-            }
-        
+        }
         else if (address[0] == '/'){
             int j =0;
-                char buffer [2000];
-                for (int i =1;i<strlen(address)-2;++i){
-                    if(address[i]=='/'){
-                        strcpy(buffer,".");
-                        strncat(buffer,address,i);
-                        mkdir(buffer,0777);
-                        //print_string(buffer,strlen(buffer));
+            char buffer [2000];
+            for (int i =1;i<strlen(address)-2;++i){
+                if(address[i]=='/'){
+                    strcpy(buffer,".");
+                    strncat(buffer,address,i);
+                    mkdir(buffer,0777);
                     }
-                }
-                strcpy(buffer,".");
-                strncat(buffer,address,strlen(address));
-                if(file_exists(buffer)){
-                    puts("File Already Existed!");return;
-                }
-                FILE *fptr;
-                fptr = fopen(buffer,"w+");
-                fclose(fptr);
-                return;
+            }
+            strcpy(buffer,".");
+            strncat(buffer,address,strlen(address));
+            if(file_exists(buffer)){
+                puts("File Already Existed!");return;
+            }
+            FILE *fptr;
+            fptr = fopen(buffer,"w+");
+            fclose(fptr);
+            return;
          }
          }
+void insertstr(char* address,char * str,int line ,int pos){
+    //CHECK VALIDITY
+    int check = check_all (address);
+    if (check)return;
+    //ADDRESS
+    FILE * fptr;
+    char add[1000];
+    strcpy(add,address);
+    //BACKUP
+    int k = largest_number_for_undo(add);
+    createbackup(add,k+1);
+    //MAIN
+    fptr = fopen (add,"r+");
+    int n = what_is_the_position(fptr,line , pos);
+    fseek(fptr,0,SEEK_SET);
+    FILE * sptr ;
+    sptr = fopen ("./root/clipboar" , "w+");
+    if (pos==0){
+    n--;
+    CopyFile(fptr,sptr,0,n);
+    fputs (str,sptr);
+    fseek(fptr,0,SEEK_SET);
+    int k = number_of_charactars(fptr);
+    fseek(fptr,0,SEEK_SET);
+    CopyFile(fptr,sptr,n+1,k-1);
+    fseek(fptr,0,SEEK_SET);
+    fseek(sptr,0,SEEK_SET);
+    CopyFile(sptr,fptr,0,k+strlen(str)-1);
+    fflush(fptr);  
+    fclose (fptr);
+    fclose (sptr);
+    remove("./root/clipboar");
+    }
+    else {
+    CopyFile(fptr,sptr,0,n-1);
+    fputs (str,sptr);
+    fseek(fptr,0,SEEK_SET);
+    int k = number_of_charactars(fptr);
+    fseek(fptr,0,SEEK_SET);
+    CopyFile(fptr,sptr,n,k-1);
+    fseek(fptr,0,SEEK_SET);
+    fseek(sptr,0,SEEK_SET);
+    CopyFile(sptr,fptr,0,k+strlen(str)-1);
+    fflush(fptr);  
+    fclose (fptr);
+    fclose (sptr);
+    remove("./root/clipboar");
+}
+}
 void cat (char*address){
     int check = check_all(address);
     char buff [100] ;
@@ -341,70 +453,15 @@ void cat (char*address){
     fclose(fptr);
         
 }
-void insertstr(char* address,char * str,int line ,int pos){
-    //CHECK VALIDITY
-    int check = check_all (address);
-    if (check)return;
-    //ADDRESS
-    FILE * fptr;
-    char add[1000];
-    strcpy(add,address);
-    //MAIN
-    fptr = fopen (add,"r+");
-    int n = what_is_the_position(fptr,line , pos);
-    fseek(fptr,0,SEEK_SET);
-    FILE * sptr ;
-    sptr = fopen ("./root/clipboar" , "w+");
-    /*int ret = system("chmod 777 ~/project/root/CLIPBOARD");
-    sscanf(address,"chmod 777 ~/project%s",address);
-    ret = system(address);*/
-    if (pos==0){
-    n--;
-    CopyFile(fptr,sptr,0,n);
-    fputs (str,sptr);
-    fseek(fptr,0,SEEK_SET);
-    int k = number_of_charactars(fptr);
-    fseek(fptr,0,SEEK_SET);
-    CopyFile(fptr,sptr,n+1,k-1);
-    //exit(1);
-    fseek(fptr,0,SEEK_SET);
-    fseek(sptr,0,SEEK_SET);
-    //exit(1);
-    CopyFile(sptr,fptr,0,k+strlen(str)-1);
-    //exit(1);
-    fflush(fptr);
-    //exit(1);  
-    fclose (fptr);
-    fclose (sptr);
-    remove("./root/clipboar");
-    }
-    else {
-    CopyFile(fptr,sptr,0,n-1);
-    fputs (str,sptr);
-    fseek(fptr,0,SEEK_SET);
-    int k = number_of_charactars(fptr);
-    fseek(fptr,0,SEEK_SET);
-    
-    CopyFile(fptr,sptr,n,k-1);
-    //exit(1);
-    fseek(fptr,0,SEEK_SET);
-    fseek(sptr,0,SEEK_SET);
-    //exit(1);
-    CopyFile(sptr,fptr,0,k+strlen(str)-1);
-    //exit(1);
-    fflush(fptr);
-    //exit(1);  
-    fclose (fptr);
-    fclose (sptr);
-    remove("./root/clipboar");
-}
-}
 void removestr(char * address , int line , int pos, int size , int mode){
     int check = check_all (address);
     if (check)return;
     //ADDRESS
     char add[1000];
     strcpy(add,address);
+    //BACKUP
+    int k = largest_number_for_undo(add);
+    createbackup(add,k+1);
     FILE* fptr ;FILE * sptr;FILE* tptr;
     if (mode ==0) {
         //FORWARD 
@@ -443,6 +500,9 @@ void copy(char * address , int line , int pos, int size , int mode){
     //ADDRESS
     char add[1000];
     strcpy(add,address);
+    //BACKUP
+    int k = largest_number_for_undo(add);
+    createbackup(add,k+1);
     FILE* fptr ;FILE * sptr;
     if (mode ==0) {
         //FORWARD 
@@ -486,6 +546,9 @@ void cut (char * address , int line , int pos, int size , int mode){
     //ADDRESS
     char add[1000];
     strcpy(add,address);
+    //BACKUP
+    int k = largest_number_for_undo(add);
+    createbackup(add,k+1);
     FILE* fptr ;FILE * sptr;FILE* tptr;
     if (mode ==0) {
         //FORWARD 
@@ -532,6 +595,9 @@ void paste (char* address,int line , int pos ) {
     FILE * fptr;
     char add[1000];
     strcpy(add,address);
+    //BACKUP
+    int k = largest_number_for_undo(add);
+    createbackup(add,k+1);
     //MAIN
     fptr = fopen (add,"r+");
     int n = what_is_the_position(fptr,line , pos);
@@ -619,26 +685,26 @@ struct finder* find (char * address , char * text) {
 
     struct finder solver;
     struct finder *ptr = &solver;
-    ptr->by_position=(int*)(malloc (sizeof(int) *strlen(source)));
-    ptr->by_word=(int *)(malloc(sizeof(int)*strlen(source)));
+    ptr->by_position=(int*)(malloc (sizeof(int) *t));
+    ptr->by_word=(int *)(malloc(sizeof(int)*t));
 
     //Creating Struct Components
 
-    int by_word [strlen(source)];
-    int by_position[strlen(source)];
+    int by_word [t];
+    int by_position[t];
 
     //Spaces
 
-    int spaces[strlen(source)];
+    int spaces[t];
     assign_spaces(source,spaces);
 
     //Assigning Initial Structs Situations
 
-    for(int i=0;i<strlen(source);++i){
+    for(int i=0;i<t;++i){
         by_position[i] = -1;
         by_word[i] = -1;
-        ptr->by_position[i] = -1;
-        ptr->by_word[i] = -1;
+        ptr->by_position[i] = 0;
+        ptr->by_word[i] = 0;
     }
     int count =0;
     //ASSESS DIFFERENT TYPES OF INPUT
@@ -651,13 +717,13 @@ struct finder* find (char * address , char * text) {
     bool bf ;
 
     if(text[0]=='*') {
-            after= (char*) malloc(sizeof(char)*strlen(source));
+            after= (char*) malloc(sizeof(char)*t);
             star_exist= true;
             strncpy(after,text+1,strlen(text)-1);
             bf = true;
         }
         else if (text[strlen(text)-1]=='*') {
-            before=(char*)malloc(sizeof(char)*strlen(source));
+            before=(char*)malloc(sizeof(char)*t);
             star_exist= true;
             strncpy(before,text,strlen(text)-1);
             bf = false;
@@ -764,13 +830,16 @@ struct finder* find (char * address , char * text) {
                     //print_array(befend,strlen(source));exit(1);
                     int max_after[strlen(source)];
                     for (int i=0;i<strlen(source);++i)max_after[i]=0;
+                    int c =0;
                     for (int i =0;i<strlen(source);++i) {
+                        c=0;
                         if (!befend[i]){
                             max_after[i]=i;
                             for(int j=i+1;j<strlen(source);j++){
-                                if(spaces[j]){max_after[i]=j;}
+                                if(spaces[j]){max_after[i]=j;c=j;}
                                 if(!spaces[j])break;
                             }
+                        if(c)i=c;
                         }          
                     }
                     for (int i =0;i<strlen(source);++i) {
@@ -845,3 +914,356 @@ struct finder* find (char * address , char * text) {
     }
     return ptr;
 }
+char* do_replace (char *source , char * pre ,char* after,int mode[2]){
+    char * answer ;answer = (char*)malloc(sizeof(char)*strlen(source));
+    struct finder * ptr = find(source,pre);
+    if(mode[0]&&mode[1]){
+        printf("You Can Not Give Both AT & ALL\n");return;
+    }
+    if (mode[0]){
+        //at 
+        int at =mode[0];
+        int k=0;
+        bool enough = false;
+        for (int i=0;i<strlen(source);++i){
+            if(ptr->by_position[i]!=-1)++k;
+            if(k==at){
+                enough = true;
+                k=i;
+            }
+        }
+        if(!enough){
+            printf("Index Is High\n");return;
+        }
+        else {
+            char buffer[strlen(source)];
+            char secbuff[strlen(source)];
+            strcpy(buffer,source+ptr->by_position[k]+1);
+            strncpy(secbuff,source,k);
+            copy_str(answer,secbuff,k);
+            copy_str(answer+k,after,strlen(after));
+            copy_str(answer+k+strlen(after),buffer,ptr->by_position[k]-k+1);
+            printf("SUCCESS\n");return answer;
+        }
+    }
+    else if(mode[1]){
+        //all
+        int j=0;
+        for (int i =0;i<strlen(source);++i){
+            if(ptr->by_position[i]!=-1){
+                copy_str(answer+j,after,strlen(after));j+=strlen(after);
+                i=ptr->by_position[i];
+            }
+            else {
+                answer[j]=source[i];++j;
+            }
+        }
+    printf("SUCCESS\n");
+    return answer;   
+    }
+    else {
+        int at = 1;
+        int k=0;
+        bool enough = false;
+        for (int i=0;i<strlen(source);++i){
+            if(ptr->by_position[i]!=-1)++k;
+            if(k==at){
+                enough = true;
+                k=i;break;
+            }
+        }
+        if(!enough){
+            printf("Index Is High\n");return NULL;
+        }
+        else {
+            char buffer[strlen(source)];
+            char secbuff[strlen(source)];
+            strcpy(buffer,source+ptr->by_position[k]+1);
+            strncpy(secbuff,source,k);
+            copy_str(answer,secbuff,k);
+            copy_str(answer+k,after,strlen(after));
+            copy_str(answer+k+strlen(after),buffer,ptr->by_position[k]-k+1);
+            printf("SUCCESS\n");return answer;
+        }
+    }
+}
+void import_replace_to_file (char * address,char*final){
+    FILE * fptr ;
+    fptr = fopen(address,"w+");
+    int t = strlen(final);int c;
+    for (int i =0;i<t;++i){
+        c = final[i];
+        fputc(c,fptr);
+    }
+    fclose (fptr);
+    //BACKUP
+    int k = largest_number_for_undo(address);
+    createbackup(address,k+1);
+    return;
+}
+struct greber* greb (char *text , char* address[],int n) {
+    struct greber *ptr;
+    struct greber test;
+    ptr = &test;
+    ptr->count=0;
+    for(int j=0;j<20000;++j){
+    ptr->files[j]=calloc(strlen(address[0])*n*100,sizeof(char));
+    ptr->lines[j]=calloc(n*2000,sizeof(char));
+    ptr->number_of_line[j]=-1;
+    }
+    for (int i =0;i<n;++i) {
+        FILE * fptr ;
+        fptr = fopen(address[i],"r+");
+        char* NOF;int dash;
+        NOF = calloc(strlen(address[i]),sizeof(char));
+        for (int q =0;q<strlen(address[i]);++q){if(*(address[i]+q)=='/')dash=q;}
+        strcat(NOF,address[i]+dash+1);
+        int line = 1;int t =number_of_charactars(fptr)-1;
+        fseek(fptr,0,SEEK_SET);
+        char * source;int c;
+        int j =1;
+        int lines[t];for(int i =0;i<t;++i) lines[i] =-1;
+        for (int i=0;i<t;++i){
+            c=fgetc(fptr);
+            if (c=='\n'){lines[j]=i;++j;}
+        }
+        if(lines[0])lines[0]=0;int aftln;
+        lines[j]=t;
+        for (int q=0;q<j;++q){
+            struct finder* find_ptr;
+            aftln=lines[q];
+            if(!aftln)aftln=-1;
+            aftln++;
+            fseek(fptr,aftln,SEEK_SET);
+            source=calloc(t,sizeof(char));
+            for(int i=0;i<lines[q+1]-lines[q];++i){
+                c=fgetc(fptr);
+                source[i]=c;
+            }
+            find_ptr = find(source,text);
+            if (find_ptr->count>0){
+                strcat(ptr->lines[ptr->count],NOF);
+                strcat(ptr->lines[ptr->count],": ");
+                strcat(ptr->lines[ptr->count],source);
+                strcat(ptr->files[ptr->count],NOF);
+                ptr->number_of_line[ptr->count] = q+1;
+                ptr->count +=1;
+            }
+        }
+        fclose(fptr);
+    }
+    return ptr;
+}
+void print_greb_lines(struct greber* ptr){
+    char c;
+    int k=0;
+    c=*(ptr->lines[0]);
+    while(c!='\0'){
+            fputs(ptr->lines[k],stdout);
+            printf("\n");
+            ++k;
+            c = *(ptr->lines[k]);
+    }
+    return ;
+}
+void print_greb_files(struct greber* ptr){
+    char c;
+    int k=0;
+    c=*(ptr->files[k]);
+    while(c!='\0'){
+            fputs(ptr->files[k],stdout);
+            printf("\n");
+            ++k;
+            c= *(ptr->files[k]);
+    }
+    return ;
+}
+void undo (char * address){
+    int check = check_all (address);
+    if (check)return;
+    //ADDRESS
+    char add[1000];
+    strcpy(add,address);
+    FILE* fptr ;
+    int k = largest_number_for_undo(address);
+    if (k==0)return;
+    char* buff=HiddenFile(address);
+    char * tuff = calloc(1000,sizeof(char));
+    sprintf(tuff,"%d",k);
+    strcat(buff,tuff);
+    rename(buff,address);
+    printf("Undo Terminated With Success\n");
+    return;
+}
+struct comparator* text_comparator (char* first , char* second){
+
+                            //Assign Struct
+//=========================================================================
+
+    struct comparator test;
+    struct comparator * ptr ; ptr =&test;
+    ptr->count=0;
+    for(int j=0;j<20000;++j){
+        ptr->lines[j]=calloc(20000,sizeof(char));
+        ptr->number_of_line[j]=-1;
+    }
+    
+                            //Check Input
+//=========================================================================
+    
+    int check = check_all (first);
+    if (check)return;
+    //ADDRESS
+    char frs[1000];
+    strcpy(frs,first);
+    check = check_all (second);
+    if (check)return;
+    //ADDRESS
+    char scn[1000];
+    strcpy(scn,second);
+    strcpy(first,frs);strcpy(second,scn);  
+    
+                            //Number of characters and lines
+//=========================================================================   
+
+    FILE * fptr ; FILE * sptr ;
+    fptr = fopen (first,"r+");sptr =fopen(second,"r+");
+    fseek(fptr,0,SEEK_SET);
+    fseek(sptr,0,SEEK_SET);
+    int t_1 = number_of_charactars(fptr)-1;fseek(fptr,0,SEEK_SET);
+    int t_2 = number_of_charactars(sptr)-1;fseek(sptr,0,SEEK_SET);
+    int l_1 = number_of_lines(fptr)-1;fseek(fptr,0,SEEK_SET);
+    int l_2 = number_of_lines(sptr)-1;fseek(sptr,0,SEEK_SET);
+    
+
+                            //Fixed Strings
+//=========================================================================
+
+    int c;
+    char before [100]={'\0'};strcpy(before,"============ #");
+    char after [100]={'\0'};strcpy(after," ============");
+    char before_nxt [100] = {'\0'};strcpy(before_nxt,">>>>>>>>>>>> #");
+    char after_nxt[100] =  {'\0'};strcpy(after_nxt," >>>>>>>>>>>>");
+    
+                            //Line Array Of First File
+//=========================================================================
+
+    fseek(fptr,0,SEEK_SET);
+    int f =1;
+    ++l_1;
+    int lines_first[l_1];for(int i =0;i<l_1;++i) lines_first[i] =-1;
+
+    for (int i=1;i<t_1;++i){
+        c=fgetc(fptr);
+        if (c=='\n'){lines_first[f]=i;++f;}
+    }
+    lines_first[f]=t_1;
+
+    
+    
+                            //Line Array Of Second File
+//==========================================================================
+    fseek(sptr,0,SEEK_SET);
+    ++l_2;
+    int s =1;
+    int lines_second[l_2];for(int i =0;i<l_2;++i) {lines_second[i] =-1;}
+    for (int i=1;i<t_2;++i){
+        c=fgetc(sptr);
+        if (c=='\n'){lines_second[s]=i;++s;}
+    }
+    //if(lines_second[0])lines_second[0]=-1;
+    lines_second[f]=t_2;
+
+                            //Assign Files To Strings
+//========================================================================= 
+
+    fseek(fptr,0,SEEK_SET);fseek(sptr,0,SEEK_SET);
+    char* fstfile =calloc(t_1,sizeof(char)); fstfile=FileToString(fptr);
+    char* scndfile =calloc(t_2,sizeof(char)); scndfile= FileToString(sptr);
+    char* buffer = calloc(2000,sizeof(char));
+
+                            //Comparasion
+//==========================================================================
+    //printf("%d%d",l_1,l_2);exit(1);
+    char* buff_first = calloc(t_1,sizeof(char));
+    char* buff_second = calloc(t_2,sizeof(char));
+    if (l_1>=l_2){
+        for(int i =0;i<l_2-1;++i){
+            if(i==0){
+            strncpy(buff_first,fstfile[lines_first[i]+1],lines_first[1]);
+            strncpy(buff_second,scndfile[lines_second[i]+1],lines_second[1]);
+            }else {
+            strncpy(buff_first,fstfile[lines_first[i]+1],lines_first[i+1]-lines_first[i]);
+            strncpy(buff_second,scndfile[lines_second[i]+1],lines_second[i+1]-lines_second[i]);
+            }
+            print_string(buff_first,lines_first[i+1]-lines_first[i]);
+            if(!strcmp(buff_first,buff_second)){
+                strcpy(ptr->lines[ptr->count],before);
+                sprintf(buffer,"%d",i);
+                strcat(ptr->lines[ptr->count],buffer);
+                strcat(ptr->lines[ptr->count],after);
+                ptr->count +=1;
+                strcpy(ptr->lines[ptr->count],buff_first);
+                ptr->count +=1;
+                strcpy(ptr->lines[ptr->count],buff_second);
+                ptr->count +=1;
+            }
+        }
+        l_1--;l_2--;
+        strncpy(buff_first,fstfile[lines_first[l_2]+1],lines_first[l_1]-lines_first[l_2]);
+        sprintf(buffer,">>>>>>>>>>>> #%d - #%d >>>>>>>>>>>>",l_2+1,l_1);
+        strcpy(ptr->lines[ptr->count],buff_first);
+        ptr->count +=1;
+        //exit(1);
+    }
+    
+
+    else {
+        for(int i =0;i<l_2-1;++i){
+            if(i==0){
+            strncpy(buff_first,fstfile[lines_first[i]+1],lines_first[1]);
+            strncpy(buff_second,scndfile[lines_second[i]+1],lines_second[1]);
+            }else {
+            strncpy(buff_first,fstfile[lines_first[i]+1],lines_first[i+1]-lines_first[i]);
+            strncpy(buff_second,scndfile[lines_second[i]+1],lines_second[i+1]-lines_second[i]);
+            }
+            if(!strcmp(buff_first,buff_second)){
+                strcpy(ptr->lines[ptr->count],before);
+                sprintf(buffer,"%d",i+1);
+                strcat(ptr->lines[ptr->count],buffer);
+                strcat(ptr->lines[ptr->count],after);
+                ptr->count +=1;
+                strcpy(ptr->lines[ptr->count],buff_first);
+                ptr->count +=1;
+                strcpy(ptr->lines[ptr->count],buff_second);
+                ptr->count +=1;
+            }
+        }
+        if(l_1==l_2)return ptr;
+        strncpy(buff_second,scndfile[lines_second[l_1]+1],lines_second[l_2]-lines_second[l_1]);
+        sprintf(buffer,">>>>>>>>>>>> #%d - #%d >>>>>>>>>>>>",l_1+1,l_2);
+        strcpy(ptr->lines[ptr->count],buffer);
+        ptr->count +=1;       
+        strcpy(ptr->lines[ptr->count],buff_first);
+        ptr->count +=1;
+    }
+    return ptr;
+}
+
+void print_comparator_lines(struct comparator* ptr){
+    char c;
+    int k=0;
+    c=*(ptr->lines[0]);
+    while(c!='\0'){
+            fputs(ptr->lines[k],stdout);
+            printf("\n");
+            ++k;
+            c = *(ptr->lines[k]);
+    }
+    return ;
+}
+
+char* closing_pair(char* address ){
+
+}
+
