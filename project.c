@@ -1,6 +1,47 @@
 //In The Name Of Allah
 #define exists file_exists
-#include "FunctionHeader.h"
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
+#include <stdbool.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <dirent.h>
+#include <errno.h>
+//General Functions
+int number_of_charactars (FILE *fptr );
+int number_of_lines (FILE* fptr);
+int  what_is_the_position(FILE * fptr, int line , int pos);
+bool file_exists( char *fname);
+bool folder_exists(char *fname);
+int check_all (char* address );
+void alter_to_address(char *address);
+void CopyFile (FILE *,FILE* , int,int);
+//Command Functions 
+void createfile (char* address);
+void insertstr ( char * address ,char* str,int line , int pos);void string_insertstr(char* address);
+void cat(char*address);
+void removestr (char* , int ,int ,int ,int);
+void copy(char*,int,int,int,int);
+void print_find (struct finder * ptr, int mode[4] );
+struct greber* greb (char *text , char* address[],int n);
+void print_array(int array[],int n);
+void assign_spaces (char *source, int spaces[]);
+void assign_arrays (char * before, char * after , char*  source, int befend[], int afterst[]);
+struct finder* find (char * source , char * text);
+void copy_str(char *det,char* origin,int size);
+char* do_replace (char *source , char * pre ,char* after,int mode[2]);
+void replace(char* address,char *pre,char *after,int mode[2]);
+void createbackup(char* address,int t);
+char* HiddenFile (char *address);
+void import_replace_to_file (char * address,char*final);
+struct comparator* text_comparator(char* first , char* second);
+void StringToFile (char* str,FILE*fptr,int max);
+char* FileToString(FILE* fptr);
+void print_greb_lines(struct greber* ptr);
+void print_comparator_lines(struct comparator* ptr);
+void print_greb_files(struct greber* ptr);
 #define TAB "    "
 int max(int a,int b){
     return a*(a>=b)+b*(b>a);
@@ -195,6 +236,7 @@ int main(){
     }
     else if (!strcmp(command_type,"auto")){
         sscanf(other,"%s %[^\n]",useless,address);
+        printf("%s",address);
         autoindent(address);
     }
     else if (!strcmp(command_type,"compare")){
@@ -260,7 +302,7 @@ void CopyFile (FILE * fptr ,FILE* sptr, int from , int to ) {
 void StringToFile (char* str,FILE*fptr,int max){
     fseek(fptr,0,SEEK_SET);
     char *buff=calloc(max,sizeof(char));
-    //print_string(str,5);
+    print_string(str,5);
     //exit(1);
     for(int i=0;i<max;++i){
         int c = atoi(buff[i]);
@@ -1562,4 +1604,3 @@ void tree(char *address, const int root, int depth){
     }
     closedir(dir);
 }
-
